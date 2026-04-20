@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusTrack</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ LOGIN / SIGNUP SCREEN -->
+<section class="screen active" id="screen-login">
+  <div class="auth-wrap">
+
+    <div class="auth-logo">Focus<span>Track</span></div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Accedi</button>
+      <button class="auth-tab"        onclick="switchAuthTab('signup')">Registrati</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="card">
+      <form class="auth-form" id="form-login" onsubmit="handleLogin(event)">
+        <div class="field-group">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="nome@email.com" required autocomplete="email">
+        </div>
+        <div class="field-group">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="••••••" required autocomplete="current-password">
+        </div>
+        <div class="auth-error" id="login-error"></div>
+        <button type="submit" class="btn-primary">Accedi →</button>
+      </form>
+
+      <!-- SIGNUP -->
+      <form class="auth-form hidden" id="form-signup" onsubmit="handleSignup(event)">
+        <div class="field-group">
+          <label>Email</label>
+          <input type="email" id="signup-email" placeholder="nome@email.com" required autocomplete="email">
+        </div>
+        <div class="field-group">
+          <label>Password</label>
+          <input type="password" id="signup-password" placeholder="Min. 6 caratteri" required autocomplete="new-password">
+        </div>
+        <div class="auth-error" id="signup-error"></div>
+        <button type="submit" class="btn-primary">Crea account →</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ SURVEY SCREEN -->
+<section class="screen" id="screen-survey">
+  <div class="survey-wrap">
+
+    <div class="survey-header">
+      <div class="survey-step" id="survey-step-label">Domanda 1 di 6</div>
+      <div class="big-title">Raccontaci<br>di te</div>
+      <div class="sub">Ci aiuta a capire meglio il tuo comportamento</div>
+    </div>
+
+    <div class="survey-progress">
+      <div class="survey-progress-fill" id="survey-progress-fill" style="width:16.6%"></div>
+    </div>
+
+    <!-- Q1: situazione -->
+    <div class="survey-question active" id="sq-1">
+      <div class="q-label">👤 Qual è la tua situazione principale?</div>
+      <div class="q-hint"></div>
+      <div class="enum-opts">
+        <button class="enum-opt" data-field="situazione" data-val="studente"   onclick="selectEnum(this)"><span class="opt-icon">🎓</span> Studente</button>
+        <button class="enum-opt" data-field="situazione" data-val="lavoratore" onclick="selectEnum(this)"><span class="opt-icon">💼</span> Lavoratore</button>
+        <button class="enum-opt" data-field="situazione" data-val="misto"      onclick="selectEnum(this)"><span class="opt-icon">⚡</span> Misto (studio + lavoro)</button>
+        <button class="enum-opt" data-field="situazione" data-val="altro"      onclick="selectEnum(this)"><span class="opt-icon">🌀</span> Altro</button>
+      </div>
+    </div>
+
+    <!-- Q2: struttura giornata -->
+    <div class="survey-question" id="sq-2">
+      <div class="q-label">⏱️ Quanto è strutturata la tua giornata tipica?</div>
+      <div class="q-hint">Utile per stimare la stabilità baseline</div>
+      <div class="enum-opts">
+        <button class="enum-opt" data-field="struttura_giornata" data-val="molto"        onclick="selectEnum(this)"><span class="opt-icon">📐</span> Molto strutturata (orari fissi)</button>
+        <button class="enum-opt" data-field="struttura_giornata" data-val="abbastanza"   onclick="selectEnum(this)"><span class="opt-icon">📋</span> Abbastanza strutturata</button>
+        <button class="enum-opt" data-field="struttura_giornata" data-val="variabile"    onclick="selectEnum(this)"><span class="opt-icon">🌊</span> Variabile</button>
+        <button class="enum-opt" data-field="struttura_giornata" data-val="caotica"      onclick="selectEnum(this)"><span class="opt-icon">🌪️</span> Caotica / imprevedibile</button>
+      </div>
+    </div>
+
+    <!-- Q3: tipo lavoro mentale -->
+    <div class="survey-question" id="sq-3">
+      <div class="q-label">🧠 Che tipo di attività fai più spesso?</div>
+      <div class="q-hint">Serve per il clustering dinamico delle categorie</div>
+      <div class="enum-opts">
+        <button class="enum-opt" data-field="tipo_lavoro" data-val="teorico"        onclick="selectEnum(this)"><span class="opt-icon">📖</span> Studio teorico / lettura</button>
+        <button class="enum-opt" data-field="tipo_lavoro" data-val="problem_solving" onclick="selectEnum(this)"><span class="opt-icon">🔢</span> Problem solving (matematica, logica…)</button>
+        <button class="enum-opt" data-field="tipo_lavoro" data-val="creativo"        onclick="selectEnum(this)"><span class="opt-icon">🎨</span> Lavoro creativo (scrittura, coding, design)</button>
+        <button class="enum-opt" data-field="tipo_lavoro" data-val="ripetitivo"      onclick="selectEnum(this)"><span class="opt-icon">🔁</span> Task ripetitivi / operativi</button>
+        <button class="enum-opt" data-field="tipo_lavoro" data-val="mix"             onclick="selectEnum(this)"><span class="opt-icon">🎯</span> Mix bilanciato</button>
+      </div>
+    </div>
+
+    <!-- Q4: stamina (slider) -->
+    <div class="survey-question" id="sq-4">
+      <div class="q-label">⚡ Quanto riesci a mantenere attenzione su un compito difficile?</div>
+      <div class="q-hint">Proxy iniziale della stamina (baseline)</div>
+      <div class="survey-slider-wrap">
+        <div class="survey-slider-labels"><span>10 min</span><span>150 min</span></div>
+        <input type="range" id="stamina-slider" min="10" max="150" step="5" value="45"
+               oninput="updateSurveySlider(this, 'stamina-val', 'stamina-desc', staminaDesc)">
+        <div class="survey-slider-val" id="stamina-val">45 min</div>
+        <div class="survey-slider-desc" id="stamina-desc">30–60 minuti</div>
+      </div>
+    </div>
+
+    <!-- Q5: sensibilità distrazioni (slider) -->
+    <div class="survey-question" id="sq-5">
+      <div class="q-label">📉 Quanto ti distrai facilmente durante attività noiose?</div>
+      <div class="q-hint">Predittore dello slip rate iniziale</div>
+      <div class="survey-slider-wrap">
+        <div class="survey-slider-labels"><span>Quasi mai</span><span>Molto facilmente</span></div>
+        <input type="range" id="distraction-slider" min="0" max="100" step="5" value="50"
+               oninput="updateSurveySlider(this, 'distraction-val', 'distraction-desc', distractionDesc)">
+        <div class="survey-slider-val" id="distraction-val">50</div>
+        <div class="survey-slider-desc" id="distraction-desc">Abbastanza facilmente</div>
+      </div>
+    </div>
+
+    <!-- Q6: variabilità -->
+    <div class="survey-question" id="sq-6">
+      <div class="q-label">🔁 Come preferisci organizzare le tue attività?</div>
+      <div class="q-hint">Utile per capire l'adattamento al sistema</div>
+      <div class="enum-opts">
+        <button class="enum-opt" data-field="variabilita" data-val="routine"    onclick="selectEnum(this)"><span class="opt-icon">⚙️</span> Routine fissa</button>
+        <button class="enum-opt" data-field="variabilita" data-val="alternanza" onclick="selectEnum(this)"><span class="opt-icon">🔄</span> Alternanza di attività</button>
+        <button class="enum-opt" data-field="variabilita" data-val="liberta"    onclick="selectEnum(this)"><span class="opt-icon">🕊️</span> Libertà totale senza struttura</button>
+      </div>
+    </div>
+
+    <!-- navigazione -->
+    <div class="survey-nav">
+      <button class="btn-back" id="survey-back" onclick="surveyBack()" style="display:none">← Indietro</button>
+      <button class="btn-primary" id="survey-next" onclick="surveyNext()">Avanti →</button>
+    </div>
+    <div class="auth-error" id="survey-error"></div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ FRICTION SCREEN -->
+<section class="screen" id="screen-friction">
+
+  <div class="top-bar">
+    <span class="top-title">Daily Tracking</span>
+    <div style="display:flex; gap:10px; align-items:center">
+      <button class="icon-btn" onclick="openSettings()" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+      <div class="user-badge" id="user-badge" tabindex="0">?
+        <div class="user-menu">
+          <button onclick="logout()">Email: —</button>
+          <button class="danger" onclick="logout()">Esci</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="big-title">Friction<br>index</div>
+    <div class="sub">How difficult does it feel to start?</div>
+
+    <div style="margin-top:28px">
+      <p class="cat-label">Category</p>
+      <div class="cats" id="cat-chips"></div>
+    </div>
+
+    <div class="slider-wrap" style="margin-top:28px">
+      <div class="slider-row"><span>−2 (Easy)</span><span>+2 (Hard)</span></div>
+      <input type="range" id="friction-slider" min="-2" max="2" step="0.25" value="0"
+             oninput="updateSlider(this, 'friction-val')">
+      <div class="slider-val"  id="friction-val">0.00</div>
+      <div class="slider-hint" id="friction-hint">Neutro</div>
+    </div>
+
+    <div style="margin-top:28px">
+      <button class="btn-primary" onclick="startSession()">Start Session</button>
+    </div>
+  </div>
+
+  <div class="stats-row" id="today-stats" style="display:none"></div>
+
+  <div class="card" id="hist-card" style="display:none">
+    <div style="font-weight:700; font-size:14px; margin-bottom:14px">Sessioni di oggi</div>
+    <div id="hist-list"></div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════ SESSION SCREEN -->
+<section class="screen" id="screen-session">
+
+  <div class="top-bar">
+    <span class="top-title">Daily Tracking</span>
+    <span class="session-label" id="sess-label">Session 1</span>
+  </div>
+
+  <div class="dual">
+    <div class="panel-left">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 160 160">
+          <circle class="ring-bg" cx="80" cy="80" r="65"/>
+          <circle class="ring-fg" cx="80" cy="80" r="65" id="ring-arc"
+                  stroke-dasharray="408.4" stroke-dashoffset="408.4"/>
+        </svg>
+        <div class="ring-label" id="ring-time">25:00</div>
+      </div>
+      <button class="stop-btn" onclick="stopSession()">STOP</button>
+    </div>
+
+    <div class="panel-right">
+      <div class="slip-info">
+        <span id="slip-time-left">25 minutes left</span><br>
+        <strong id="slip-count-display">0</strong>
+        <span style="font-size:13px; opacity:.7"> DISTRAZIONI</span>
+      </div>
+      <button class="add-slip-btn" onclick="addSlip()">+</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════ BREAK SCREEN -->
+<section class="screen" id="screen-break">
+  <div class="break-card">
+    <div class="break-title">☕ Break</div>
+    <div class="break-timer" id="break-time">05:00</div>
+    <p style="opacity:.6; font-size:14px">Prossima sessione automatica</p>
+    <button class="btn-primary" style="max-width:220px" onclick="endBreak()">Salta Break →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ TIREDNESS SCREEN -->
+<section class="screen" id="screen-tiredness">
+
+  <div class="top-bar">
+    <span class="top-title">Daily Tracking</span>
+  </div>
+
+  <div class="card">
+    <div class="big-title">Tiredness<br>index</div>
+    <div class="sub">How tired do you feel?</div>
+
+    <div class="slider-wrap" style="margin-top:24px">
+      <div class="slider-row"><span>−2 (Energico)</span><span>+2 (Esausto)</span></div>
+      <input type="range" id="tiredness-slider" min="-2" max="2" step="0.25" value="0"
+             oninput="updateSlider(this, 'tiredness-val')">
+      <div class="slider-val"  id="tiredness-val">0.00</div>
+      <div class="slider-hint" id="tiredness-hint">Neutro</div>
+    </div>
+
+    <div style="margin-top:28px" class="btn-row">
+      <button class="btn-danger"  onclick="discardSession()">Scarta sessione</button>
+      <button class="btn-primary" onclick="saveSession()">Salva sessione</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════ SETTINGS MODAL -->
+<div class="modal-bg" id="modal-settings">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSettings()">✕</button>
+    <div style="font-weight:800; font-size:22px; margin-bottom:20px">Session Settings</div>
+    <div style="display:grid; grid-template-columns:1fr 80px 80px; gap:12px; margin-bottom:8px">
+      <div></div>
+      <div class="col-head">Work (min)</div>
+      <div class="col-head">Break (min)</div>
+    </div>
+    <div class="settings-grid" id="settings-rows"></div>
+    <div style="margin-top:24px">
+      <button class="btn-primary" onclick="saveSettings()">Salva</button>
+    </div>
+  </div>
+</div>
+
+<!--
+  SCRIPT LOAD ORDER
+  auth          - JWT, login/signup API (no deps)
+  state         - shared state (no deps)
+  api           - fetch wrappers, uses auth
+  ui            - DOM helpers (no deps)
+  notifications - Web Notifications (no deps)
+  settings      - uses state, api, ui
+  session       - uses state, api, ui, settings, notifications
+  tiredness     - uses state, api
+  break         - uses state, ui, notifications
+  survey        - uses auth (no other deps)
+  app           - init + orchestration (loaded last)
+-->
+<script src="js/auth.js"></script>
+<script src="js/state.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/session.js"></script>
+<script src="js/tiredness.js"></script>
+<script src="js/break.js"></script>
+<script src="js/survey.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

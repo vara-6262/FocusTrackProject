@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: focustrack
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true   # Render genera un valore sicuro automaticamente
+    disk:
+      name: focustrack-db
+      mountPath: /opt/render/project/src/db
+      sizeGB: 1
