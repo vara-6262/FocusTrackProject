@@ -19,9 +19,9 @@ router.get('/', (req, res) => {
        AVG(fatigue_score)    AS avg_fatigue,
        AVG(start_cost)       AS avg_start_cost
      FROM sessions
-     WHERE user_id  = ?
+     WHERE user_id  = $1
        AND discarded = 0
-       AND date(timestamp_start) = ?
+       AND DATE(timestamp_start) = $2
      GROUP BY categoria`,
     [req.userId, today]
   );

@@ -12,7 +12,7 @@ router.use(requireAuth);
 router.post('/', (req, res) => {
   const { session_id, ts } = req.body;
   db.insert(
-    'INSERT INTO distractions (session_id, user_id, ts) VALUES (?, ?, ?)',
+    'INSERT INTO distractions (session_id, user_id, ts) VALUES ($1, $2, $3)',
     [session_id, req.userId, ts]
   );
   return res.status(201).json({ ok: true });

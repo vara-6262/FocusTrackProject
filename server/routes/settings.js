@@ -12,7 +12,7 @@ router.use(requireAuth);
 
 router.get('/', (req, res) => {
   const rows = db.all(
-    'SELECT categoria, session_min, break_min FROM settings WHERE user_id = ?',
+    'SELECT categoria, session_min, break_min FROM settings WHERE user_id = $1',
     [req.userId]
   );
   return res.json(rows);
@@ -23,10 +23,10 @@ router.put('/', (req, res) => {
   for (const item of items) {
     db.run(
       `INSERT INTO settings (user_id, categoria, session_min, break_min)
-       VALUES (?, ?, ?, ?)
+       VALUES ($1, $2, $3, $4)
        ON CONFLICT(user_id, categoria) DO UPDATE SET
-         session_min = excluded.session_min,
-         break_min   = excluded.break_min`,
+         session_min = EXCLUDED.session_min,
+         break_min   = EXCLUDED.break_min`,
       [req.userId, item.categoria, item.session_min, item.break_min]
     );
   }

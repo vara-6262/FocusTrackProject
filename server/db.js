@@ -19,6 +19,7 @@ async function all(sql, params = []) {
 }
 
 async function get(sql, params = []) {
+  console.log("🧪 SQL QUERY:", sql, params);
   const res = await pool.query(sql, params);
   return res.rows[0] ?? null;
 }
