@@ -77,3 +77,35 @@ const auth = (() => {
   return { getToken, isLoggedIn, headers, signup, login, fetchMe, logout, getCachedUser };
 
 })();
+
+window.handleLogin = async function (event) {
+  event.preventDefault();
+
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+
+  try {
+    await auth.login(email, password);
+    showScreen('screen-survey'); // o friction screen
+  } catch (e) {
+    document.getElementById('login-error').innerText = e.message;
+  }
+};
+
+window.handleSignup = async function (event) {
+  event.preventDefault();
+
+  const email = document.getElementById('signup-email').value;
+  const password = document.getElementById('signup-password').value;
+
+  try {
+    await auth.signup(email, password, null);
+    showScreen('screen-survey');
+  } catch (e) {
+    document.getElementById('signup-error').innerText = e.message;
+  }
+};
+
+window.logout = function () {
+  auth.logout();
+};
