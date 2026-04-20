@@ -33,15 +33,17 @@ app.use('/api/stats',        require('./routes/stats'));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // SPA fallback: tutto ciò che non è API → index.html
-app.get('/{*path}', (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
+
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
 
 initDb().then(() => {
   app.listen(PORT, () => {
     console.log(`🎯 FocusTrack running at http://localhost:${PORT}`);
+    console.log("DB URL presente:", !!process.env.DATABASE_URL);
   });
 }).catch(err => {
   console.error('Errore inizializzazione DB:', err);
